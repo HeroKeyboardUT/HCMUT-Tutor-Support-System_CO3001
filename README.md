@@ -1,25 +1,16 @@
-# Vibe - HCMUT Tutoring Platform
+# HCMUT Tutoring Platform
 
 Nền tảng kết nối sinh viên với tutor tại Đại học Bách khoa TP.HCM.
 
-## 🚀 Tính năng
+## Tính năng
 
 - **Đăng ký & Đăng nhập** - Xác thực JWT, phân quyền Student/Tutor/Admin
 - **Hồ sơ cá nhân** - Tutor: chuyên môn, lịch rảnh | Student: môn cần hỗ trợ
 - **Quản lý Session** - Tạo, đăng ký, bắt đầu, hoàn thành buổi học
-- **Chat realtime** - Nhắn tin giữa tutor và student
 - **Đánh giá & Feedback** - Rating sau mỗi buổi học
 - **Thông báo** - Realtime notifications
-- **Điểm rèn luyện** - Tự động cộng điểm khi hoàn thành session
 
-## 🛠️ Tech Stack
-
-| Frontend     | Backend           | Database |
-| ------------ | ----------------- | -------- |
-| React + Vite | Node.js + Express | MongoDB  |
-| Tailwind CSS | Socket.IO         | Mongoose |
-
-## 📦 Cài đặt
+## Cài đặt
 
 ### 1. Clone & Install
 
@@ -53,7 +44,7 @@ cd backend && npm start    # Backend: http://localhost:5000
 cd frontend && npm run dev # Frontend: http://localhost:5173
 ```
 
-## 📁 Cấu trúc
+## Cấu trúc
 
 ```
 Vibe/
@@ -72,14 +63,14 @@ Vibe/
 └── package.json
 ```
 
-## 👥 Tài khoản test
+## Tài khoản test (xem thêm trong seeds/seed.js)
 
-| Role    | Email                | Password   |
-| ------- | -------------------- | ---------- |
-| Admin   | admin@hcmut.edu.vn   | admin123   |
-| Tutor   | tutor@hcmut.edu.vn   | tutor123   |
-| Student | student@hcmut.edu.vn | student123 |
+| Role    | Email                 | Password |
+| ------- | --------------------- | -------- |
+| Admin   | admin@hcmut.edu.vn    | 123456   |
+| Tutor   | tutor1@hcmut.edu.vn   | 123456   |
+| Student | student1@hcmut.edu.vn | 123456   |
 
-## 📝 License
+## License
 
 MIT
