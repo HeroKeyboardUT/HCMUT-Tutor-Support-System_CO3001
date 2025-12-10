@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const {
   Session,
   TutorProfile,
@@ -12,10 +13,25 @@ const {
 } = require("./timezone");
 
 /**
+ * Check if MongoDB is connected
+ */
+const isMongoConnected = () => {
+  return mongoose.connection.readyState === 1;
+};
+
+/**
  * Auto-complete sessions that have passed their end time
  * This function should be called periodically (e.g., every 5 minutes)
  */
 const autoCompleteSessions = async () => {
+  // Skip if MongoDB is not connected
+  if (!isMongoConnected()) {
+    console.log(
+      "[SessionScheduler] Skipping autoCompleteSessions - MongoDB not connected"
+    );
+    return 0;
+  }
+
   try {
     const vietnamNow = getVietnamNow();
     const todayStart = getVietnamTodayStart();
@@ -138,6 +154,14 @@ const autoCompleteSessions = async () => {
  * (optional - cancel sessions that are 30 minutes past start time without being started)
  */
 const autoCancelNoShowSessions = async () => {
+  // Skip if MongoDB is not connected
+  if (!isMongoConnected()) {
+    console.log(
+      "[SessionScheduler] Skipping autoCancelNoShowSessions - MongoDB not connected"
+    );
+    return 0;
+  }
+
   try {
     const vietnamNow = getVietnamNow();
     const todayStart = getVietnamTodayStart();
@@ -206,12 +230,22 @@ const autoCancelNoShowSessions = async () => {
  */
 const startSessionScheduler = () => {
   const INTERVAL = 5 * 60 * 1000; // 5 minutes
+  const INITIAL_DELAY = 30 * 1000; // 30 seconds - wait for MongoDB to connect
 
   console.log("[SessionScheduler] Starting session scheduler...");
 
-  // Run immediately on start
-  autoCompleteSessions();
-  autoCancelNoShowSessions();
+  // Delay first run to allow MongoDB to connect
+  setTimeout(async () => {
+    if (isMongoConnected()) {
+      console.log("[SessionScheduler] Running initial session check...");
+      await autoCompleteSessions();
+      await autoCancelNoShowSessions();
+    } else {
+      console.log(
+        "[SessionScheduler] MongoDB not ready, will retry on next interval"
+      );
+    }
+  }, INITIAL_DELAY);
 
   // Then run periodically
   setInterval(async () => {
