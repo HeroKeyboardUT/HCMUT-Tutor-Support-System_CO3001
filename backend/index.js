@@ -5,6 +5,7 @@ const cors = require("cors");
 const connectDB = require("./config/database");
 const config = require("./config/config");
 const { startSessionScheduler } = require("./utils/sessionScheduler");
+const { keepAlive } = require("./utils/keepAlive");
 
 // Initialize express app
 const app = express();
@@ -126,6 +127,9 @@ app.listen(PORT, () => {
 
   // Start session scheduler to auto-complete expired sessions
   startSessionScheduler();
+
+  // Start keep alive ping to prevent Render free tier spin down
+  keepAlive();
 });
 
 module.exports = app;
