@@ -22,6 +22,7 @@ const isMongoConnected = () => {
 /**
  * Auto-complete sessions that have passed their end time
  * This function should be called periodically (e.g., every 5 minutes)
+ * Sessions will be completed when end time passes (both confirmed and in_progress)
  */
 const autoCompleteSessions = async () => {
   // Skip if MongoDB is not connected
@@ -38,9 +39,9 @@ const autoCompleteSessions = async () => {
     const todayEnd = getVietnamTodayEnd();
     const currentTime = vietnamNow.toTimeString().slice(0, 5); // "HH:MM" in Vietnam time
 
-    // Find sessions that are in_progress and have passed their end time
+    // Find sessions that are confirmed or in_progress and have passed their end time
     const expiredSessions = await Session.find({
-      status: sessionStatus.IN_PROGRESS,
+      status: { $in: [sessionStatus.CONFIRMED, sessionStatus.IN_PROGRESS] },
       $or: [
         // Sessions from previous days
         { scheduledDate: { $lt: todayStart } },
@@ -50,7 +51,7 @@ const autoCompleteSessions = async () => {
             $gte: todayStart,
             $lt: todayEnd,
           },
-          endTime: { $lt: currentTime },
+          endTime: { $lte: currentTime },
         },
       ],
     }).populate("tutor student");

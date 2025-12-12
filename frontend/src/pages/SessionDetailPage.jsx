@@ -155,7 +155,6 @@ const SessionDetailPage = () => {
     const config = {
       pending: { variant: "warning", label: "Chờ xác nhận" },
       confirmed: { variant: "primary", label: "Đã xác nhận" },
-      in_progress: { variant: "info", label: "Đang diễn ra" },
       completed: { variant: "success", label: "Hoàn thành" },
       cancelled: { variant: "danger", label: "Đã hủy" },
       no_show: { variant: "secondary", label: "Vắng mặt" },
@@ -212,8 +211,7 @@ const SessionDetailPage = () => {
     (studentUserId === userId || String(studentUserId) === String(userId));
 
   const canConfirm = isSessionTutor && session?.status === "pending";
-  const canStart = isSessionTutor && session?.status === "confirmed";
-  const canComplete = isSessionTutor && session?.status === "in_progress";
+  const canStart = isSessionTutor && session?.status === "confirmed"; // This now completes the session
   const canCancel =
     ["pending", "confirmed"].includes(session?.status) &&
     (isSessionTutor || isSessionStudent);
@@ -277,16 +275,7 @@ const SessionDetailPage = () => {
                     onClick={handleStartSession}
                     loading={submitting}
                   >
-                    Bắt đầu buổi học
-                  </Button>
-                )}
-                {canComplete && (
-                  <Button
-                    variant="primary"
-                    onClick={handleCompleteSession}
-                    loading={submitting}
-                  >
-                    Hoàn thành
+                    Hoàn thành buổi học
                   </Button>
                 )}
                 {canFeedback && (

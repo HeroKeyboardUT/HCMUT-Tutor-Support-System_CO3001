@@ -567,8 +567,11 @@ const DashboardPage = () => {
                                       ? "bg-green-500 text-white hover:bg-green-600"
                                       : "bg-yellow-400 text-gray-900 hover:bg-yellow-500"
                                   }`}
+                                  title={`${session.title} - ${
+                                    session.tutor?.user?.firstName || "Tutor"
+                                  }`}
                                 >
-                                  {session.tutor?.user?.firstName || "Mentor"}
+                                  {session.title || "Session"}
                                 </Link>
                               )}
                             </td>

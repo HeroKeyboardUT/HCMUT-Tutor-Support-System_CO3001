@@ -141,16 +141,38 @@ router.get("/", async (req, res) => {
 // NOTE: This route MUST be before /:id routes to avoid "me" being matched as an ID
 router.get("/me/profile", authenticate, async (req, res) => {
   try {
-    const tutor = await TutorProfile.findOne({ user: req.userId }).populate(
+    let tutor = await TutorProfile.findOne({ user: req.userId }).populate(
       "user",
       "firstName lastName fullName email faculty department avatar"
     );
 
+    // If profile doesn't exist, create one
     if (!tutor) {
-      return res.status(404).json({
-        success: false,
-        message: "Tutor profile not found",
+      const user = await User.findById(req.userId);
+      if (!user || user.role !== "tutor") {
+        return res.status(404).json({
+          success: false,
+          message: "Tutor profile not found. Please register as a tutor.",
+        });
+      }
+
+      // Create default tutor profile
+      tutor = await TutorProfile.create({
+        user: req.userId,
+        tutorType: "senior_student",
+        expertise: [],
+        rating: 0,
+        totalReviews: 0,
+        completedSessions: 0,
+        bio: "",
+        isAvailable: true,
       });
+
+      // Populate user data
+      tutor = await TutorProfile.findById(tutor._id).populate(
+        "user",
+        "firstName lastName fullName email faculty department avatar"
+      );
     }
 
     res.json({

@@ -9,13 +9,14 @@ const TutorListPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
 
+  // Extract unique subjects from tutors data
   const subjects = [
     "all",
-    "Database Systems",
-    "Network Systems",
-    "Data Structures",
-    "Machine Learning",
-    "C++ Programming",
+    ...new Set(
+      tutors
+        .flatMap((tutor) => tutor.expertise?.map((e) => e.subject || e) || [])
+        .filter(Boolean)
+    ),
   ];
 
   useEffect(() => {
@@ -44,7 +45,15 @@ const TutorListPage = () => {
       tutor.expertise?.some((e) =>
         (e.subject || e).toLowerCase().includes(searchQuery.toLowerCase())
       );
-    return matchesSearch;
+
+    // Filter by selected subject
+    const matchesSubject =
+      selectedSubject === "all" ||
+      tutor.expertise?.some((e) =>
+        (e.subject || e).toLowerCase().includes(selectedSubject.toLowerCase())
+      );
+
+    return matchesSearch && matchesSubject;
   });
 
   return (

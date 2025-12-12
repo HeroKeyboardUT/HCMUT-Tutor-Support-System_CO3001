@@ -731,9 +731,10 @@ router.put("/:id/confirm", authenticate, async (req, res) => {
   }
 });
 
-// @desc    Start session (change status to in_progress)
+// @desc    Complete session manually (tutor can complete before end time)
 // @route   PUT /api/sessions/:id/start
 // @access  Private/Tutor only
+// NOTE: This now directly completes the session instead of changing to in_progress
 router.put("/:id/start", authenticate, async (req, res) => {
   try {
     const session = await Session.findById(req.params.id);
@@ -751,37 +752,39 @@ router.put("/:id/start", authenticate, async (req, res) => {
     if (!tutorProfile || !session.tutor.equals(tutorProfile._id)) {
       return res.status(403).json({
         success: false,
-        message: "Only the tutor can start this session",
+        message: "Only the tutor can complete this session",
       });
     }
 
     if (session.status !== sessionStatus.CONFIRMED) {
       return res.status(400).json({
         success: false,
-        message: "Session must be confirmed before starting",
+        message: "Session must be confirmed before completing",
       });
     }
 
-    session.status = sessionStatus.IN_PROGRESS;
+    // Directly complete the session (no in_progress state)
+    session.status = sessionStatus.COMPLETED;
     session.startedAt = new Date();
+    session.completedAt = new Date();
     await session.save();
 
     res.json({
       success: true,
-      message: "Session started",
+      message: "Session completed",
       data: { session },
     });
   } catch (error) {
-    console.error("Start session error:", error);
+    console.error("Complete session error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to start session",
+      message: "Failed to complete session",
       error: error.message,
     });
   }
 });
 
-// @desc    Complete session
+// @desc    Complete session with notes
 // @route   PUT /api/sessions/:id/complete
 // @access  Private/Tutor only
 router.put("/:id/complete", authenticate, async (req, res) => {

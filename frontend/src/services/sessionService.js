@@ -46,12 +46,12 @@ const sessionService = {
     return await api.put(`/sessions/${id}/confirm`);
   },
 
-  // Start session (change to in_progress)
+  // Complete session (directly completes the session)
   start: async (id) => {
     return await api.put(`/sessions/${id}/start`);
   },
 
-  // Complete session
+  // Complete session with notes
   complete: async (id, data) => {
     return await api.put(`/sessions/${id}/complete`, data);
   },
