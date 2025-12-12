@@ -13,11 +13,32 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Middleware
+// CORS configuration - support multiple origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONTEND_URL,
+]
+  .filter(Boolean)
+  .map((url) => url.replace(/\/$/, "")); // Remove trailing slash
+
 app.use(
   cors({
-    origin: config.cors.origin,
-    credentials: config.cors.credentials,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      // Remove trailing slash from origin for comparison
+      const normalizedOrigin = origin.replace(/\/$/, "");
+
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        callback(null, true);
+      } else {
+        console.log(`CORS blocked origin: ${origin}`);
+        callback(null, true); // Allow all origins in development, change to callback(new Error('Not allowed by CORS')) for strict mode
+      }
+    },
+    credentials: true,
   })
 );
 app.use(express.json({ limit: "10mb" }));

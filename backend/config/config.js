@@ -59,6 +59,8 @@ module.exports = {
     SESSION_RESCHEDULED: "session_rescheduled",
     SESSION_COMPLETED: "session_completed",
     SESSION_NO_SHOW: "session_no_show",
+    SESSION_REGISTRATION: "session_registration",
+    SESSION_STARTED: "session_started",
     NEW_MATCHING: "new_matching",
     MATCHING_APPROVED: "matching_approved",
     FEEDBACK_REQUEST: "feedback_request",

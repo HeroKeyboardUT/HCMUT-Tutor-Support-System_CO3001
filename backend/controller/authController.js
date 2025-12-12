@@ -1,4 +1,9 @@
-const { User, DataCoreRecord } = require("../model");
+const {
+  User,
+  DataCoreRecord,
+  TutorProfile,
+  StudentProfile,
+} = require("../model");
 const {
   generateAccessToken,
   generateRefreshToken,
@@ -56,6 +61,31 @@ const register = async (req, res) => {
       major,
       academicYear,
     });
+
+    // Create profile based on role
+    if (userRole === config.roles.TUTOR) {
+      await TutorProfile.create({
+        user: user._id,
+        expertise: [],
+        subjects: [],
+        education: [],
+        availableSlots: [],
+        rating: 0,
+        totalReviews: 0,
+        completedSessions: 0,
+        bio: "",
+        isAvailable: true,
+      });
+    } else if (userRole === config.roles.STUDENT) {
+      await StudentProfile.create({
+        user: user._id,
+        learningGoals: [],
+        preferredSubjects: [],
+        completedSessions: 0,
+        trainingPoints: 0,
+        trainingPointsHistory: [],
+      });
+    }
 
     // Generate tokens
     const accessToken = generateAccessToken(user._id);
